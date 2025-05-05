@@ -6,20 +6,24 @@ function App() {
   const [suggestions, setSuggestions] = useState([])
 
   useEffect(() => {
-    if (query === '') {
-      setSuggestions([])
-      return
-    }
-
-    fetch(`https://boolean-spec-frontend.vercel.app/freetestapi/products?search=${query}`)
-      .then(res => res.json())
-      .then(data => {
-        setSuggestions(data)
-      })
-      .catch(err => {
-        console.error('Errore nella chiamata API:', err)
+    const timeoutId = setTimeout(() => {
+      if (query === '') {
         setSuggestions([])
-      })
+        return
+      }
+
+      fetch(`https://boolean-spec-frontend.vercel.app/freetestapi/products?search=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          setSuggestions(data)
+        })
+        .catch(err => {
+          console.error('Errore nella chiamata API:', err)
+          setSuggestions([])
+        })
+    }, 300) // debounce di 300ms
+
+    return () => clearTimeout(timeoutId) // pulizia
   }, [query])
 
   return (
@@ -43,4 +47,5 @@ function App() {
 }
 
 export default App
+
 
